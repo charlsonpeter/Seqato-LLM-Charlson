@@ -4,20 +4,18 @@ import requests
 
 app = FastAPI()
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "mistral"
+OLLAMA_API_URL = "http://localhost:11434/api/chat"
+MODEL_NAME = "mistral"  # Or any model you pulled
 
 class ChatRequest(BaseModel):
-    prompt: str
+    messages: list
 
 @app.post("/chat")
-def chat_with_llm(request: ChatRequest):
-    ollama_payload = {
-        "model": MODEL,
-        "prompt": request.prompt,
+def chat_with_llm(chat_req: ChatRequest):
+    payload = {
+        "model": MODEL_NAME,
+        "messages": chat_req.messages,
         "stream": False
     }
-
-    response = requests.post(OLLAMA_URL, json=ollama_payload)
-    result = response.json()
-    return {"response": result.get("response", "")}
+    response = requests.post(OLLAMA_API_URL, json=payload)
+    return response.json()
