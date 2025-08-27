@@ -1,25 +1,4 @@
-"""
-Global News Topic Tracker (Beginner‑Friendly)
-===========================================
-A simple Streamlit app that pulls headlines from **Google News (RSS)**, groups
-similar stories into **topics**, and summarizes each topic with either:
-- **OpenAI GPT** (if you have an API key), or
-- a **local Hugging Face model** (runs on your machine, no key required).
-
-Why RSS? It's more reliable and TOS‑friendly than scraping raw HTML.
-
-How to run (quick):
-1) Save this file as `app.py`.
-2) Create a virtual env (optional but recommended).
-3) Install requirements (see the expander at the bottom, or run: `pip install -r requirements.txt`).
-4) Start the app: `streamlit run app.py`.
-5) In the sidebar, choose a country/topic or enter a keyword. Pick your summarizer.
-
-This single file is **complete** and designed to be easy to read.
-"""
-
 from __future__ import annotations
-
 import os
 import re
 import html
