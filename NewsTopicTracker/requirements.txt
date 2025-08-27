@@ -1,0 +1,6 @@
+streamlit==1.37.1
+feedparser==6.0.11
+pandas==2.2.2
+transformers==4.43.3
+accelerate==0.33.0
+openai==1.40.6
