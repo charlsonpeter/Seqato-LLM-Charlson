@@ -1,4 +1,4 @@
-# 📘 Learning Log: Global News Topic Tracker
+# Global News Topic Tracker
 
 This document records the learning journey while developing the **Global News Topic Tracker** Streamlit app.
 

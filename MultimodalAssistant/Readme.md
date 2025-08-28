@@ -1,4 +1,4 @@
-# 📘 Learning Log: Local Multi-Modal Assistant (Ollama + Streamlit)
+# Local Multi-Modal Assistant (Ollama + Streamlit)
 
 ## Objective
 Build a Streamlit application that allows users to ask questions about images and text using a local Ollama model (`llava`). The app should work fully offline and handle both text-only and image+text queries.

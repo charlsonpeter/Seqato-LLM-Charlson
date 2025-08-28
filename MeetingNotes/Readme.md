@@ -1,4 +1,4 @@
-# 📘 Learning Log: Meeting Notes & Action Item Extractor
+# Meeting Notes & Action Item Extractor
 
 ## Objective
 Build a Streamlit application that accepts an audio file upload, transcribes speech to text using Whisper, summarizes the transcript using a Hugging Face transformer model, and extracts action items from the transcript.

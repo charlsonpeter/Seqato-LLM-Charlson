@@ -1,4 +1,4 @@
-# 📘 Learning Log: Custom Chatbot Q&A (RAG Application)
+# Custom Chatbot Q&A (RAG Application)
 
 ## 🗓️ Project Goal
 Develop an AI-powered chatbot using **LangChain** and **ChromaDB** for document-based Q&A, with a **Streamlit UI**.  
