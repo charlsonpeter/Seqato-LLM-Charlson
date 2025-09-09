@@ -4,14 +4,18 @@ import streamlit as st
 try:
     from langchain_community.document_loaders import PyPDFLoader, TextLoader
     from langchain_community.vectorstores import Chroma
-    from langchain_community.llms import Ollama
-except:
+except Exception:
     from langchain.document_loaders import PyPDFLoader, TextLoader
     from langchain.vectorstores import Chroma
-    from langchain.llms import Ollama
+
+# Prefer modern Ollama integration; fall back to community only if needed
+try:
+    from langchain_ollama import OllamaLLM
+except Exception:
+    from langchain_community.llms import Ollama as OllamaLLM
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
@@ -81,7 +85,8 @@ if "qa_chain" not in st.session_state:
 
 # Create QA chain after upload
 if uploaded and st.session_state.qa_chain is None:
-    save_path = os.path.join(".", uploaded.name)
+    os.makedirs('Uploaded_Files', exist_ok=True)
+    save_path = os.path.join("Uploaded_Files", uploaded.name)
     with open(save_path, "wb") as f:
         f.write(uploaded.getbuffer())
 
@@ -89,7 +94,7 @@ if uploaded and st.session_state.qa_chain is None:
     vdb = create_vectorstore(docs)
     retriever = vdb.as_retriever()
 
-    llm = Ollama(model=model_name, temperature=0.2)
+    llm = OllamaLLM(model=model_name, temperature=0.2)
     st.session_state.qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
@@ -116,7 +121,8 @@ if st.session_state.qa_chain:
             # If this is the latest user message and no bot reply yet
             if i == len(st.session_state.messages) - 1:
                 with st.spinner("Thinking..."):
-                    answer = st.session_state.qa_chain.run(msg)
+                    result = st.session_state.qa_chain.invoke({"query": msg})
+                    answer = result.get("result") if isinstance(result, dict) else str(result)
                 st.session_state.messages.append(("bot", answer))
                 st.rerun()
 
