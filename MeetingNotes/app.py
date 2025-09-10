@@ -1,6 +1,11 @@
 import streamlit as st
 import whisper
-from transformers import pipeline
+try:
+    from transformers import pipeline as hf_pipeline  # local summarizer
+except Exception:
+    hf_pipeline = None
+
+st.set_page_config(page_title="Meeting Notes & Action Item Extractor", page_icon="🎙️")
 
 # Load Whisper (local speech-to-text)
 @st.cache_resource
@@ -10,7 +15,7 @@ def load_whisper():
 # Load summarizer
 @st.cache_resource
 def load_summarizer():
-    return pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+    return hf_pipeline("summarization", model="facebook/bart-large-cnn")
 
 whisper_model = load_whisper()
 summarizer = load_summarizer()

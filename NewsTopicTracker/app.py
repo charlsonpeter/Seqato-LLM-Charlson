@@ -16,11 +16,6 @@ try:
 except Exception:
     hf_pipeline = None
 
-try:
-    from openai import OpenAI  # OpenAI client (>=1.0)
-except Exception:
-    OpenAI = None  # type: ignore
-
 # -----------------------------
 # UI & CONSTANTS
 # -----------------------------
@@ -160,7 +155,7 @@ def format_as_paragraph(summary: str) -> str:
     return re.sub(r"\s+", " ", summary).strip()
 
 # -----------------------------
-# Summarizers (local + OpenAI)
+# Summarizers (local)
 # -----------------------------
 @st.cache_resource(show_spinner=False)
 def load_local_summarizer():
@@ -168,7 +163,7 @@ def load_local_summarizer():
         return None
     try:
         # small, fast summarizer
-        return hf_pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+        return hf_pipeline("summarization", model="facebook/bart-large-cnn")
     except Exception:
         return None
 
@@ -194,33 +189,6 @@ def summarize_with_local(text: str) -> str:
         raw = " ".join([p.strip() for p in parts[:5] if p.strip()])
         return format_as_paragraph(raw)
 
-
-def summarize_with_openai(text: str, api_key: str | None, model: str = "gpt-4o-mini") -> str:
-    if OpenAI is None:
-        return "(OpenAI library not installed. Install `openai`.)"
-    if not api_key and not os.getenv("OPENAI_API_KEY"):
-        return "(Set OPENAI_API_KEY or paste your key in the sidebar.)"
-    client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-    text = clean_for_summary(text)[:8000]
-    try:
-        prompt = f"""
-Write a clear, factual single-paragraph summary (5–7 sentences) of the following news cluster.
-Cover who/what, what happened, when/where (if known), and why it matters.
-Avoid speculation. No bullet points, no headings, no preamble or outro.
-
-TEXT:
-{text}
-"""
-        resp = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,
-            max_tokens=600,
-        )
-        return resp.choices[0].message.content.strip()
-    except Exception as e:
-        return f"(OpenAI error: {e})"
-
 # -----------------------------
 # Sidebar controls
 # -----------------------------
@@ -235,12 +203,6 @@ with st.sidebar:
     max_articles = st.slider("Max articles", 20, 200, 80, 10)
 
     st.divider()
-    summarizer_choice = st.radio("Summarizer", ["Local (free)", "OpenAI"], index=0)
-    openai_key = None
-    openai_model = "gpt-4o-mini"
-    if summarizer_choice == "OpenAI":
-        openai_key = st.text_input("OpenAI API Key (optional if set as env)", type="password")
-        openai_model = st.text_input("OpenAI model", value="gpt-4o-mini")
 
 # -----------------------------
 # Fetch + prepare data
@@ -304,10 +266,7 @@ for row in cluster_table:
     with st.container(border=True):
         st.markdown(f"### {sub.iloc[0]['title']}")
         with st.spinner("Summarizing…"):
-            if summarizer_choice == "OpenAI":
-                summary_md = summarize_with_openai(cluster_text, api_key=openai_key, model=openai_model)
-            else:
-                summary_md = summarize_with_local(cluster_text)
+            summary_md = summarize_with_local(cluster_text)
         st.markdown(summary_md)
         all_summaries_md.append(f"#### {sub.iloc[0]['title']}\n" + summary_md)
 

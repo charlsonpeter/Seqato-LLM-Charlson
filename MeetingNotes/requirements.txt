@@ -2,3 +2,5 @@ streamlit
 openai
 whisper
 pandas
+# Pin NumPy to a version compatible with Numba and accelerate
+numpy==1.26.4

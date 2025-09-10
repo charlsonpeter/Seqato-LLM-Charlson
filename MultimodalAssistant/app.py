@@ -6,6 +6,7 @@ import os
 import base64
 import json
 
+st.set_page_config(page_title="Multi-Modal Assistant", page_icon="🖼️")
 st.title("🖼️ Local Multi-Modal Assistant (Ollama + Streamlit)")
 st.write("Ask questions about images + text, fully offline.")
 
