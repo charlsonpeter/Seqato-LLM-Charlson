@@ -200,7 +200,7 @@ with st.sidebar:
     topic_choice = st.selectbox("Topic", list(TOPIC_MAP.keys()), index=0)
     query = st.text_input("Keyword search (overrides Topic)", placeholder="e.g., elections, climate, semiconductor")
 
-    max_articles = st.slider("Max articles", 20, 200, 80, 10)
+    max_articles = st.slider("Max articles", 10, 200, 10, 10)
 
     st.divider()
 
